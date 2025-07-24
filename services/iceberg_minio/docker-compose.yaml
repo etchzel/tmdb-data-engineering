@@ -1,6 +1,6 @@
 services:
   iceberg-rest-catalog:
-    image: tabulario/iceberg-rest
+    image: apache/iceberg-rest-fixture
     container_name: iceberg-rest
     networks:
       - iceberg-network
@@ -22,7 +22,9 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DOMAIN=minio
     networks:
-      - iceberg-network
+      iceberg-network:
+        aliases:
+          - warehouse.minio
     ports:
       - 9001:9001
       - 9000:9000
