@@ -40,7 +40,7 @@ This project follows a Lakehouse architecture setup, which combines the best fea
 2. Navigate to the project directory:
 
    ```bash
-   cd qoala-test
+   cd tmdb-data-engineering
    ```
 
    NOTE: On Mac with ARM architecture CPU, make sure to use `linux/arm64` images.
