@@ -1,0 +1,10 @@
+# files
+kaggle.json
+.env
+*.ipynb
+
+# folders
+logs/*
+plugins/*
+data-lake
+explore
