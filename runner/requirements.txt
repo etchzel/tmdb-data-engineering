@@ -1,2 +1,1 @@
 pyiceberg[polars,s3fs,pyarrow]
-kagglehub
