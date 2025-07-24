@@ -11,7 +11,8 @@ RUN apt-get update -qq && \
     apt-get install -y wget \
     curl \
     apt-transport-https \
-    gpg
+    gpg \
+    unzip
 
 # add Adoptium Temurin repo to install java
 RUN wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null && \
@@ -22,6 +23,10 @@ RUN apt-get update -qq && \
 # install trino cli
 RUN wget -qO /usr/local/bin/trino https://repo1.maven.org/maven2/io/trino/trino-cli/476/trino-cli-476-executable.jar && \
     chmod +x /usr/local/bin/trino
+
+# install jq for parsing json
+RUN wget -qO /usr/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-linux-amd64 && \
+    chmod +x /usr/bin/jq
 
 # cleanup
 RUN apt-get clean && \
@@ -34,6 +39,8 @@ FROM apache/airflow:slim-2.10.5-python3.12
 COPY --from=python-builder /home/airflow/.local/lib/python3.12/site-packages /home/airflow/.local/lib/python3.12/site-packages
 COPY --from=java-builder /usr/lib/jvm /usr/lib/jvm
 COPY --from=java-builder /usr/local/bin/trino /usr/local/bin/trino
+COPY --from=java-builder /usr/bin/jq /usr/bin/jq
+COPY --from=java-builder /usr/bin/unzip /usr/bin/unzip
 
 USER root
 
