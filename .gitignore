@@ -4,7 +4,8 @@ kaggle.json
 *.ipynb
 
 # folders
-logs/*
-plugins/*
+__pycache__
+logs
+plugins
 data-lake
 explore
