@@ -1,4 +1,4 @@
-FROM python:3.12-alpine3.22
+FROM python:3.12-slim-bookworm
 
 WORKDIR /jobs
 COPY . ./
