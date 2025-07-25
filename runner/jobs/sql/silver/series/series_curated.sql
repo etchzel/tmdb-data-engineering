@@ -27,7 +27,8 @@ WITH (
    max_commit_retry = 4
 );
 
-WITH source AS (
+MERGE INTO silver.series_curated AS target
+USING (
     SELECT id as series_id,
            original_name as series_original_name,
            name as localized_name,
@@ -53,10 +54,7 @@ WITH source AS (
         FROM bronze.series
     )
     WHERE rn = 1
-)
-
-MERGE INTO silver.series_curated AS target
-USING source
+) AS source
 ON target.series_id = source.series_id
 WHEN MATCHED AND target.as_of < source.as_of THEN
     UPDATE SET first_air_date = source.first_air_date,

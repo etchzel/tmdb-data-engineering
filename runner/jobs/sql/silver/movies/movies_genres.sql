@@ -12,25 +12,24 @@ WITH (
    max_commit_retry = 4
 );
 
-WITH deduped_movies AS (
-    SELECT id, genres
-    FROM (
-        SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) as rn
-        FROM bronze.movies
+MERGE INTO silver.movies_genres AS target
+USING (
+    WITH deduped_movies AS (
+        SELECT id, genres
+        FROM (
+            SELECT *,
+                  ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) as rn
+            FROM bronze.movies
+        )
+        WHERE rn = 1
     )
-    WHERE rn = 1
-),
-source AS (
-    SELECT id as movie_id,
+    SELECT DISTINCT
+           id as movie_id,
            genre_id,
            name as genre_name
     FROM deduped_movies AS m,
          UNNEST(genres) AS g(genre_id, name)
-)
-
-MERGE INTO silver.movies_genres AS target
-USING source
+) AS source
 ON target.movie_id = source.movie_id AND 
    target.genre_id = source.genre_id
 WHEN NOT MATCHED THEN

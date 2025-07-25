@@ -12,24 +12,24 @@ WITH (
    max_commit_retry = 4
 );
 
-WITH deduped_series AS (
-    SELECT id, genres
-    FROM (
-        SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) as rn
-        FROM bronze.series
+MERGE INTO silver.series_genres AS target
+USING (
+    WITH deduped_series AS (
+        SELECT id, genres
+        FROM (
+            SELECT *,
+                  ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) as rn
+            FROM bronze.series
+        )
+        WHERE rn = 1
     )
-    WHERE rn = 1
-),
-source AS (
-    SELECT id as series_id,
+    SELECT DISTINCT
+           id as series_id,
            genre_id,
            name as genre_name
     FROM deduped_series AS s,
          UNNEST(genres) AS g(genre_id, name)
-)
-MERGE INTO silver.series_genres AS target
-USING source
+) AS source
 ON target.series_id = source.series_id AND 
    target.genre_id = source.genre_id
 WHEN NOT MATCHED THEN

@@ -25,7 +25,8 @@ WITH (
    max_commit_retry = 4
 );
 
-WITH source AS (
+MERGE INTO silver.movies_curated AS target
+USING (
     SELECT id as movie_id,
            imdb_id,
            original_title as movie_title,
@@ -49,10 +50,7 @@ WITH source AS (
         FROM bronze.movies
     )
     WHERE rn = 1
-)
-
-MERGE INTO silver.movies_curated AS target
-USING source
+) AS source
 ON target.movie_id = source.movie_id
 WHEN MATCHED AND target.as_of < source.as_of THEN
     UPDATE SET movie_release_date = source.movie_release_date,
