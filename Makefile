@@ -1,4 +1,5 @@
 build:
+		docker build -t job-runner -f ./runner/Dockerfile ./runner
 		docker build -t airflow-qoala -f ./services/airflow/Dockerfile ./services/airflow
 
 up:
