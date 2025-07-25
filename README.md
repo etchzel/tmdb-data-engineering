@@ -391,6 +391,21 @@ Flow of the dag is as follow:
 
 - In the Dashboard section, you will be lead to create a chart, just follow the instructions.
 
+## Cleanup
+
+Run the command
+
+```bash
+make down
+```
+
+And optionally delete `data-lake` folder, as well as delete some docker volumes:
+
+```bash
+docker volume rm tmdb-data-engineering_postgres-db-volume
+docker volume rm tmdb-data-engineering_superset-home
+```
+
 ## Folder Structure
 
 ```txt
